@@ -4,5 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+enterpolation = "0.3.0"
 image = "0.25.6"
+palette = "0.7.6"
 rayon = "1.10.0"

@@ -1,5 +1,7 @@
 use rayon::prelude::*;
 use std::time::Instant;
+use enterpolation::{linear::ConstEquidistantLinear, Curve};
+use palette::LinSrgb;
 
 
 fn calculate_point(x_pos: f64, y_pos: f64, max_iterations: u32) -> u32 {
@@ -22,8 +24,8 @@ fn select_colour(iterations: u32) -> (u8, u8, u8) {
     }
 
     let red = ((iterations >> 16) & 0xFF) as u8; // rbg
-    let blue = ((iterations >> 8) & 0xFF) as u8;
-    let green = ((iterations & 0xFF)) as u8;
+    let green = ((iterations >> 8) & 0xFF) as u8;
+    let blue = ((iterations & 0xFF)) as u8;
     (red, green, blue)
 }
 
@@ -33,6 +35,14 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
     let scale_x = (x2 - x1) / width as f64; 
     let scale_y = (y2 - y1) / height as f64;
 
+    let gradient = ConstEquidistantLinear::<f32, _, 3>::equidistant_unchecked([
+        LinSrgb::new(0.00, 0.00, 0.00),
+        LinSrgb::new(0.20, 0.20, 0.60),
+        LinSrgb::new(0.95, 0.95, 0.95),
+    ]);
+
+    let taken_colors: Vec<_> = gradient.take(max_iterations as usize + 1).collect();
+
     let buf = img.as_mut();
 
     buf.par_chunks_mut(3)
@@ -41,8 +51,11 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
             let x = (i as u32) % width;
             let y = (i as u32) / height;
             let iterations = calculate_point(x as f64 * scale_x + x1, y as f64 * scale_y + y1, max_iterations);
-            let (r, g, b) = select_colour(((16777216.0 / max_iterations as f64) * iterations as f64) as u32);
-            pixel.copy_from_slice(&[r, g, b]);
+            //let (r, g, b) = select_colour(((16777216.0 / max_iterations as f64) * iterations as f64) as u32);
+            let rgb = taken_colors[iterations as usize];
+
+            let src = [(rgb.red * 255.0) as u8, (rgb.green * 255.0) as u8, (rgb.blue * 255.0) as u8];
+            pixel.copy_from_slice(&src);
         });
 
     img.save("fractal_p.png").unwrap();
