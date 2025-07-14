@@ -162,7 +162,7 @@ fn generate_image_p(width: u32, height: u32, offset_x: f64, offset_y: f64, zoom:
 
     
 
-    let max_iterations = 5000;
+    let max_iterations = 1000;
     let scale_x = 2.47 / width as f64; 
     let scale_y = 2.24 / height as f64;
 
@@ -172,7 +172,7 @@ fn generate_image_p(width: u32, height: u32, offset_x: f64, offset_y: f64, zoom:
         .enumerate()
         .for_each(|(i, pixel)| {
             let x = (i as u32) % width;
-            let y = (i as u32) / width;
+            let y = (i as u32) / height;
             let iterations = calculate_point(x, y, offset_x, offset_y, zoom, scale_x, scale_y, max_iterations);
             let (r, g, b) = select_colour(((16777216.0 / max_iterations as f64) * iterations as f64) as u32);
             pixel.copy_from_slice(&[r, g, b]);
