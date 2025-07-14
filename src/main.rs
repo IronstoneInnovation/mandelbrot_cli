@@ -110,7 +110,7 @@ fn select_char(iterations: u32, max_iterations: u32) -> String {
     }
 }
 
-fn calculate_point(x_pos: u32, y_pos: u32, offset_x: f64, offset_y: f64, zoom: f64, scale_x: f64, scale_y: f64, max_iterations: u32) -> u32 {
+fn calculate_point(x_pos: u32, y_pos: u32, scale_x: f64, scale_y: f64, max_iterations: u32) -> u32 {
     let scaled_x = ((x_pos as f64 * scale_x) - (2.0+offset_x)) / zoom;
     let scaled_y = ((y_pos as f64 * scale_y) - (1.12-offset_y))/ zoom;
 
@@ -131,19 +131,19 @@ fn calculate_point(x_pos: u32, y_pos: u32, offset_x: f64, offset_y: f64, zoom: f
     iteration
 }
 
-fn generate_text(width: u32, height: u32, offset_x: f64, offset_y: f64, zoom: f64) {
-    // internal params
-    let max_iterations = 99;
-    let scale_x = 2.47 / width as f64; 
-    let scale_y = 2.24 / height as f64;
-    for y in 0..height {
-        for x in 0..width {
-            let iterations = calculate_point(x, y, offset_x, offset_y, zoom, scale_x, scale_y, max_iterations);
-            print!("{}", select_char(iterations, max_iterations));
-        }
-        print!("\n");
-    }
-}
+//fn generate_text(width: u32, height: u32, offset_x: f64, offset_y: f64, zoom: f64) {
+//    // internal params
+//    let max_iterations = 99;
+//    let scale_x = 2.47 / width as f64; 
+//    let scale_y = 2.24 / height as f64;
+//    for y in 0..height {
+//        for x in 0..width {
+//            let iterations = calculate_point(x, y, offset_x, offset_y, scale_x, scale_y, max_iterations);
+//            print!("{}", select_char(iterations, max_iterations));
+//        }
+//        print!("\n");
+//    }
+//}
 
 fn select_colour(iterations: u32) -> (u8, u8, u8) {
     if iterations > 16777215 {
@@ -157,14 +157,12 @@ fn select_colour(iterations: u32) -> (u8, u8, u8) {
 }
 
 
-fn generate_image_p(width: u32, height: u32, offset_x: f64, offset_y: f64, zoom: f64) {
+fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64) {
     let mut img = image::RgbImage::new(width, height);
 
-    
-
     let max_iterations = 5000;
-    let scale_x = 2.47 / width as f64; 
-    let scale_y = 2.24 / height as f64;
+    let scale_x = (x2 - x1) / width as f64; 
+    let scale_y = (y2 - y2) / height as f64;
 
     let buf = img.as_mut();
 
@@ -173,7 +171,7 @@ fn generate_image_p(width: u32, height: u32, offset_x: f64, offset_y: f64, zoom:
         .for_each(|(i, pixel)| {
             let x = (i as u32) % width;
             let y = (i as u32) / width;
-            let iterations = calculate_point(x, y, offset_x, offset_y, zoom, scale_x, scale_y, max_iterations);
+            let iterations = calculate_point(x, y, scale_x, scale_y, max_iterations);
             let (r, g, b) = select_colour(((16777216.0 / max_iterations as f64) * iterations as f64) as u32);
             pixel.copy_from_slice(&[r, g, b]);
         });
