@@ -171,7 +171,7 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64)
         .for_each(|(i, pixel)| {
             let x = (i as u32) % width;
             let y = (i as u32) / height;
-            let iterations = calculate_point(x as f64 * scale_x, y as f64 * scale_y, max_iterations);
+            let iterations = calculate_point(x as f64 * scale_x + x1, y as f64 * scale_y + y1, max_iterations);
             let (r, g, b) = select_colour(((16777216.0 / max_iterations as f64) * iterations as f64) as u32);
             pixel.copy_from_slice(&[r, g, b]);
         });
