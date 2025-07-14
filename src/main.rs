@@ -18,16 +18,6 @@ fn calculate_point(x_pos: f64, y_pos: f64, max_iterations: u32) -> u32 {
     iteration
 }
 
-fn select_colour(iterations: u32) -> (u8, u8, u8) {
-    if iterations > 16777215 {
-        return (0, 0, 0)
-    }
-
-    let red = ((iterations >> 16) & 0xFF) as u8; // rbg
-    let green = ((iterations >> 8) & 0xFF) as u8;
-    let blue = ((iterations & 0xFF)) as u8;
-    (red, green, blue)
-}
 
 fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64, max_iterations: u32) {
     let mut img = image::RgbImage::new(width, height);
@@ -37,7 +27,7 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
 
     let gradient = ConstEquidistantLinear::<f32, _, 3>::equidistant_unchecked([
         LinSrgb::new(0.00, 0.00, 0.00),
-        LinSrgb::new(0.20, 0.20, 0.60),
+        LinSrgb::new(0.00, 0.00, 0.95),
         LinSrgb::new(0.95, 0.95, 0.95),
     ]);
 
