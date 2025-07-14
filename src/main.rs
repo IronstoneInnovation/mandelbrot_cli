@@ -184,7 +184,10 @@ fn main() {
     //generate_text(64, 26, 0.0, 0.0, 1.0);
     
     let now = Instant::now();
-    generate_image_p(1080, 1080, -2.0, -1.12, 0.47, 1.12);
+    //generate_image_p(1080, 1080, -2.0, -1.12, 0.47, 1.12);
+    let xd = 1.0;
+    let yd = 0.5;
+    generate_image_p(1080, 1080, -2.0 + xd, -1.12 + yd, 0.47 - xd, 1.12 - xd);
     let elapsed = now.elapsed();
     println!("Elapsed time: {:.2?}", elapsed);
 
