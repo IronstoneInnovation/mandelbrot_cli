@@ -110,21 +110,21 @@ fn select_char(iterations: u32, max_iterations: u32) -> String {
     }
 }
 
-fn calculate_point(x_pos: u32, y_pos: u32, scale_x: f64, scale_y: f64, max_iterations: u32) -> u32 {
-    let scaled_x = ((x_pos as f64 * scale_x) - (2.0+offset_x)) / zoom;
-    let scaled_y = ((y_pos as f64 * scale_y) - (1.12-offset_y))/ zoom;
+fn calculate_point(x_pos: f64, y_pos: f64, max_iterations: u32) -> u32 {
+    //let scaled_x = ((x_pos as f64 * scale_x) - (2.0+offset_x)) / zoom;
+    //let scaled_y = ((y_pos as f64 * scale_y) - (1.12-offset_y))/ zoom;
 
     // outside the set?
-    if (scaled_x < -2.0 || scaled_x > 0.47) || (scaled_y < -1.12 || scaled_y > 1.12) {
-        return 0;
-    }
+    //if (scaled_x < -2.0 || scaled_x > 0.47) || (scaled_y < -1.12 || scaled_y > 1.12) {
+    //    return 0;
+    //}
 
     let mut x = 0.0;
     let mut y = 0.0;
     let mut iteration = 0;
     while f64::powf(x, 2.0) + f64::powf(y, 2.0) <= 4.0 && iteration < max_iterations {
-        let x_temp = f64::powf(x, 2.0) - f64::powf(y, 2.0) + scaled_x;
-        y = 2.0*x*y + scaled_y;
+        let x_temp = f64::powf(x, 2.0) - f64::powf(y, 2.0) + x_pos;
+        y = 2.0*x*y + y_pos;
         x = x_temp;
         iteration+=1;
     }
@@ -162,7 +162,7 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64)
 
     let max_iterations = 5000;
     let scale_x = (x2 - x1) / width as f64; 
-    let scale_y = (y2 - y2) / height as f64;
+    let scale_y = (y2 - y1) / height as f64;
 
     let buf = img.as_mut();
 
@@ -170,8 +170,8 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64)
         .enumerate()
         .for_each(|(i, pixel)| {
             let x = (i as u32) % width;
-            let y = (i as u32) / width;
-            let iterations = calculate_point(x, y, scale_x, scale_y, max_iterations);
+            let y = (i as u32) / height;
+            let iterations = calculate_point(x as f64 * scale_x, y as f64 * scale_y, max_iterations);
             let (r, g, b) = select_colour(((16777216.0 / max_iterations as f64) * iterations as f64) as u32);
             pixel.copy_from_slice(&[r, g, b]);
         });
@@ -184,7 +184,7 @@ fn main() {
     //generate_text(64, 26, 0.0, 0.0, 1.0);
     
     let now = Instant::now();
-    generate_image_p(1080, 1080, 0.0, 0.0, 1.0);
+    generate_image_p(1080, 1080, -2.0, -1.12, 0.47, 1.12);
     let elapsed = now.elapsed();
     println!("Elapsed time: {:.2?}", elapsed);
 
