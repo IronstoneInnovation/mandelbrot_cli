@@ -5,7 +5,8 @@ use palette::LinSrgb;
 
 
 fn calculate_point(x_pos: f64, y_pos: f64, max_iterations: u32) -> u32 {
-
+    // Calculates the critical number of iterations for a given point on the Mandelbrot Set
+    // derived from https://en.wikipedia.org/wiki/Mandelbrot_set#Computer_drawings
     let mut x = 0.0;
     let mut y = 0.0;
     let mut iteration = 0;
@@ -20,11 +21,10 @@ fn calculate_point(x_pos: f64, y_pos: f64, max_iterations: u32) -> u32 {
 
 
 fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64, max_iterations: u32) {
-    let mut img = image::RgbImage::new(width, height);
+    // Generates a Mandelbrot Set image and saves it as a PNG.
 
-    let scale_x = (x2 - x1) / width as f64; 
-    let scale_y = (y2 - y1) / height as f64;
-
+    // Set up colour pallete.
+    // First create a colour curve...
     let bspline = match BSpline::builder()
         .clamped()             // the curve should be clamped (variation)
         .elements([
@@ -43,30 +43,38 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
                 panic!("Unexpected runtime error: {:?}", error);
             }
         };
+    // ...then generate max_iterations number of colours along the curve 
+    let colours: Vec<_> = bspline.take(max_iterations as usize + 1).collect();
 
-    let taken_colors: Vec<_> = bspline.take(max_iterations as usize + 1).collect();
+    // x, y scale factors
+    let scale_x = (x2 - x1) / width as f64; 
+    let scale_y = (y2 - y1) / height as f64;
 
+    // Create a new blank image and a buffer for parallel processing
+    let mut img = image::RgbImage::new(width, height);
     let buf = img.as_mut();
 
+    // Calculate colours and update pixels in parallel
     buf.par_chunks_mut(3)
         .enumerate()
         .for_each(|(i, pixel)| {
+            // determine x, y from array index
             let x = (i as u32) % width;
             let y = (i as u32) / height;
+            // calculate iterations for this point
             let iterations = calculate_point(x as f64 * scale_x + x1, y as f64 * scale_y + y1, max_iterations);
-
-            
-            let mut rgb = taken_colors[iterations as usize];
-
+            // pick colour
+            let mut rgb = colours[iterations as usize];
             // black saturation option
             if iterations >= max_iterations {
                 rgb = LinSrgb::new(0.0, 0.0, 0.0);
             }
-
+            // convert to u8 RGB and update pixel
             let src = [(rgb.red * 255.0) as u8, (rgb.green * 255.0) as u8, (rgb.blue * 255.0) as u8];
             pixel.copy_from_slice(&src);
         });
 
+    // Done - save generated image
     img.save("fractal_p.png").unwrap();
 }
 
