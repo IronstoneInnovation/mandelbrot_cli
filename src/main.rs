@@ -28,10 +28,10 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
     let bspline = match BSpline::builder()
         .clamped()             // the curve should be clamped (variation)
         .elements([
-            LinSrgb::new(0.00, 0.00, 0.00),
-            LinSrgb::new(0.00, 0.00, 0.95),
-            LinSrgb::new(0.00, 0.95, 0.95),
-            LinSrgb::new(0.95, 0.95, 0.95),
+            LinSrgb::new(0.00, 0.00, 0.50),
+            LinSrgb::new(0.00, 0.00, 1.00),
+            LinSrgb::new(0.00, 1.00, 1.00),
+            LinSrgb::new(1.0, 1.0, 1.0),
         ])
         .equidistant::<f64>() // knots should be evenly distributed
         .degree(3)            
