@@ -30,7 +30,7 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
     let bspline = match BSpline::builder()
         .clamped()             // the curve should be clamped (variation)
         .elements([
-            LinSrgb::new(0.00, 0.00, 0.50),
+            LinSrgb::new(0.00, 0.00, 0.15),
             LinSrgb::new(0.00, 0.00, 1.00),
             LinSrgb::new(0.00, 1.00, 1.00),
             LinSrgb::new(1.0, 1.0, 1.0),
@@ -85,13 +85,15 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
 #[derive(Parser, Default, Debug)]
 struct Cli {
     #[clap(short, long, default_value_t = 1080)]
-    image_size: u64,
+    size: u32,
     #[clap(short, long, default_value_t = 0.0)]
     x_offset: f64,
     #[clap(short, long, default_value_t = 0.0)]
     y_offset: f64,
     #[clap(short, long, default_value_t = 1.0)]
     magnification: f64,
+    #[clap(short, long, default_value_t = 100)]
+    iterations: u32,
     #[clap(short, long, default_value = "out.png" )]
     output_path: std::path::PathBuf,
 }
@@ -103,12 +105,12 @@ fn main() {
 
     println!("x_offset: {:?}, y_offset: {:?}, magnification: {:?}", args.x_offset, args.y_offset, args.magnification);
 
-    // User parameters
-    let magnification = 8.0;
-    let x_offset = 1.1;
-    let y_offset = 0.2;
-    let image_size = 1080;
-    let max_iterations = 1000;
+    // Extract CLI args
+    let magnification = args.magnification;
+    let x_offset = args.x_offset;
+    let y_offset = args.y_offset;
+    let image_size = args.size;
+    let max_iterations = args.iterations;
 
     
 
@@ -129,7 +131,7 @@ fn main() {
 
     // Generate image and measure elapsed time
     println!("Generating Mandelbrot Set - this may take a while...");
-    println!("x1, y1 = {:?}; x2, y2 = {:?}", (x1, y1), (x2, y2));
+    //println!("x1, y1 = {:?}; x2, y2 = {:?}", (x1, y1), (x2, y2));
     let now = Instant::now();
     let img = generate_image_p(image_size, image_size, x1, y1, x2, y2, max_iterations);
     let elapsed = now.elapsed();
