@@ -2,6 +2,8 @@ use rayon::prelude::*;
 use std::time::Instant;
 use enterpolation::{bspline::{BSpline}, Curve};
 use palette::LinSrgb;
+use image::ImageBuffer;
+use clap::Parser;
 
 
 fn calculate_point(x_pos: f64, y_pos: f64, max_iterations: u32) -> u32 {
@@ -20,7 +22,7 @@ fn calculate_point(x_pos: f64, y_pos: f64, max_iterations: u32) -> u32 {
 }
 
 
-fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64, max_iterations: u32) {
+fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64, max_iterations: u32) -> ImageBuffer<image::Rgb<u8>, Vec<u8>> {
     // Generates a Mandelbrot Set image and saves it as a PNG.
 
     // Set up colour pallete.
@@ -74,40 +76,65 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
             pixel.copy_from_slice(&src);
         });
 
+    img
     // Done - save generated image
-    img.save("fractal_p.png").unwrap();
+    //img.save("fractal_p.png").unwrap();
 }
 
-fn main() {
-    let magnification = 2.0;
-    let x_offset = 0.0;
-    let y_offset = 0.0;
 
-    println!("Generating Mandelbrot Set - this may take a while...");
+#[derive(Parser, Default, Debug)]
+struct Cli {
+    #[clap(short, long, default_value_t = 1080)]
+    image_size: u64,
+    #[clap(short, long, default_value_t = 0.0)]
+    x_offset: f64,
+    #[clap(short, long, default_value_t = 0.0)]
+    y_offset: f64,
+    #[clap(short, long, default_value_t = 1.0)]
+    magnification: f64,
+    #[clap(short, long, default_value = "out.png" )]
+    output_path: std::path::PathBuf,
+}
+
+
+fn main() {
+
+    let args = Cli::parse();
+
+    println!("x_offset: {:?}, y_offset: {:?}, magnification: {:?}", args.x_offset, args.y_offset, args.magnification);
+
+    // User parameters
+    let magnification = 8.0;
+    let x_offset = 1.1;
+    let y_offset = 0.2;
+    let image_size = 1080;
+    let max_iterations = 1000;
 
     
+
+    
+    // Calculate x, y range
     let x_min = -2.0;
     let y_min = -1.12;
     let x_max = 0.47;
     let y_max = 1.12;
-
-    // Calculate x, y range
     let x_length = x_max - x_min;
     let y_length = y_max - y_min;
     let x_midpoint = x_min + (x_length / 2.0) + x_offset;
-    let y_midpoint = y_min + (y_length / 2.0) + y_offset;
-
+    let y_midpoint = y_min + (y_length / 2.0) - y_offset;  // - because images are upside down
     let x1 = x_midpoint - (x_length / (2.0 * magnification));
     let y1 = y_midpoint - (y_length / (2.0 * magnification));
     let x2 = x_midpoint + (x_length / (2.0 * magnification));
     let y2 = y_midpoint + (y_length / (2.0 * magnification));
-    println!("x1, y1 = {:?}; x2, y2 = {:?}", (x1, y1), (x2, y2));
 
     // Generate image and measure elapsed time
+    println!("Generating Mandelbrot Set - this may take a while...");
+    println!("x1, y1 = {:?}; x2, y2 = {:?}", (x1, y1), (x2, y2));
     let now = Instant::now();
-    generate_image_p(1080, 1080, x1, y1, x2, y2, 1000);
+    let img = generate_image_p(image_size, image_size, x1, y1, x2, y2, max_iterations);
     let elapsed = now.elapsed();
-
     println!("Done! Elapsed time: {:.2?}", elapsed);
+
+    img.save(args.output_path).unwrap();
 
 }
