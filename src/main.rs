@@ -22,8 +22,8 @@ fn calculate_point(x_pos: f64, y_pos: f64, max_iterations: u32) -> u32 {
 }
 
 
-fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64, max_iterations: u32) -> ImageBuffer<image::Rgb<u8>, Vec<u8>> {
-    // Generates a Mandelbrot Set image and saves it as a PNG.
+fn generate_image(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64, max_iterations: u32) -> ImageBuffer<image::Rgb<u8>, Vec<u8>> {
+    // Generates a Mandelbrot Set image.
 
     // Set up colour pallete.
     // First create a colour curve...
@@ -77,8 +77,6 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
         });
 
     img
-    // Done - save generated image
-    //img.save("fractal_p.png").unwrap();
 }
 
 
@@ -101,20 +99,14 @@ struct Cli {
 
 fn main() {
 
-    let args = Cli::parse();
-
-    println!("x_offset: {:?}, y_offset: {:?}, magnification: {:?}", args.x_offset, args.y_offset, args.magnification);
-
     // Extract CLI args
+    let args = Cli::parse();
     let magnification = args.magnification;
     let x_offset = args.x_offset;
     let y_offset = args.y_offset;
     let image_size = args.size;
     let max_iterations = args.iterations;
 
-    
-
-    
     // Calculate x, y range
     let x_min = -2.0;
     let y_min = -1.12;
@@ -131,9 +123,8 @@ fn main() {
 
     // Generate image and measure elapsed time
     println!("Generating Mandelbrot Set - this may take a while...");
-    //println!("x1, y1 = {:?}; x2, y2 = {:?}", (x1, y1), (x2, y2));
     let now = Instant::now();
-    let img = generate_image_p(image_size, image_size, x1, y1, x2, y2, max_iterations);
+    let img = generate_image(image_size, image_size, x1, y1, x2, y2, max_iterations);
     let elapsed = now.elapsed();
     println!("Done! Elapsed time: {:.2?}", elapsed);
 
