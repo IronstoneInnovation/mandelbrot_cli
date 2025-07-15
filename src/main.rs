@@ -79,11 +79,33 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
 }
 
 fn main() {
-    
+    let magnification = 2.0;
+    let x_offset = 0.0;
+    let y_offset = 0.0;
+
     println!("Generating Mandelbrot Set - this may take a while...");
 
+    
+    let x_min = -2.0;
+    let y_min = -1.12;
+    let x_max = 0.47;
+    let y_max = 1.12;
+
+    // Calculate x, y range
+    let x_length = x_max - x_min;
+    let y_length = y_max - y_min;
+    let x_midpoint = x_min + (x_length / 2.0) + x_offset;
+    let y_midpoint = y_min + (y_length / 2.0) + y_offset;
+
+    let x1 = x_midpoint - (x_length / (2.0 * magnification));
+    let y1 = y_midpoint - (y_length / (2.0 * magnification));
+    let x2 = x_midpoint + (x_length / (2.0 * magnification));
+    let y2 = y_midpoint + (y_length / (2.0 * magnification));
+    println!("x1, y1 = {:?}; x2, y2 = {:?}", (x1, y1), (x2, y2));
+
+    // Generate image and measure elapsed time
     let now = Instant::now();
-    generate_image_p(1080, 1080, -2.0, -1.12, 0.47, 1.12, 1000);
+    generate_image_p(1080, 1080, x1, y1, x2, y2, 1000);
     let elapsed = now.elapsed();
 
     println!("Done! Elapsed time: {:.2?}", elapsed);
