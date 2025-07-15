@@ -1,8 +1,6 @@
 use rayon::prelude::*;
-use rayon::str::Matches;
 use std::time::Instant;
-use enterpolation::{linear::ConstEquidistantLinear, Curve};
-use enterpolation::{bspline::{BSpline}};
+use enterpolation::{bspline::{BSpline}, Curve};
 use palette::LinSrgb;
 
 
@@ -27,32 +25,25 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
     let scale_x = (x2 - x1) / width as f64; 
     let scale_y = (y2 - y1) / height as f64;
 
-    let gradient = ConstEquidistantLinear::<f32, _, 4>::equidistant_unchecked([
-        LinSrgb::new(0.00, 0.00, 0.00),
-        LinSrgb::new(0.00, 0.00, 0.95),
-        LinSrgb::new(0.00, 0.95, 0.95),
-        LinSrgb::new(0.95, 0.95, 0.95),
-    ]);
-
     let bspline = match BSpline::builder()
         .clamped()             // the curve should be clamped (variation)
         .elements([
             LinSrgb::new(0.00, 0.00, 0.00),
             LinSrgb::new(0.00, 0.00, 0.95),
+            LinSrgb::new(0.00, 0.95, 0.95),
             LinSrgb::new(0.95, 0.95, 0.95),
         ])
         .equidistant::<f64>() // knots should be evenly distributed
-        .degree(1)            // cubic curve
-        .domain(-2.0,2.0)     // input domain
+        .degree(3)            
+        .domain(-2.0,2.0)     
         .constant::<4>()      // we need degree+1 space to interpolate
         .build() {
-            Ok(c) => c,
+            Ok(curve) => curve,
             Err(error) => {
-                panic!("shit! {:?}", error);
+                panic!("Unexpected runtime error: {:?}", error);
             }
         };
 
-    //let taken_colors: Vec<_> = gradient.take(max_iterations as usize + 1).collect();
     let taken_colors: Vec<_> = bspline.take(max_iterations as usize + 1).collect();
 
     let buf = img.as_mut();
