@@ -39,11 +39,10 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
         .elements([
             LinSrgb::new(0.00, 0.00, 0.00),
             LinSrgb::new(0.00, 0.00, 0.95),
-            LinSrgb::new(0.00, 0.95, 0.95),
             LinSrgb::new(0.95, 0.95, 0.95),
         ])
         .equidistant::<f64>() // knots should be evenly distributed
-        .degree(3)            // cubic curve
+        .degree(1)            // cubic curve
         .domain(-2.0,2.0)     // input domain
         .constant::<4>()      // we need degree+1 space to interpolate
         .build() {
@@ -65,7 +64,13 @@ fn generate_image_p(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64,
             let y = (i as u32) / height;
             let iterations = calculate_point(x as f64 * scale_x + x1, y as f64 * scale_y + y1, max_iterations);
 
-            let rgb = taken_colors[iterations as usize];
+            
+            let mut rgb = taken_colors[iterations as usize];
+
+            // black saturation option
+            if iterations >= max_iterations {
+                rgb = LinSrgb::new(0.0, 0.0, 0.0);
+            }
 
             let src = [(rgb.red * 255.0) as u8, (rgb.green * 255.0) as u8, (rgb.blue * 255.0) as u8];
             pixel.copy_from_slice(&src);
