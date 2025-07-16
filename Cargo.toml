@@ -5,8 +5,8 @@ edition = "2021"
 description = "A Rust-powered Mandelbrot Set generator."
 license = "MIT"
 repository = "https://github.com/IronstoneInnovation/mandelbrot_cli"
-keywords = ["http", "cache"]
-categories = ["web-programming::http-server"]
+keywords = ["cli"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 clap = { version = "4.5.41", features = ["derive"] }
