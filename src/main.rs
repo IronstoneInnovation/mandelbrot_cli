@@ -1,4 +1,5 @@
 use rayon::prelude::*;
+use core::panic;
 use std::time::Instant;
 use enterpolation::{bspline::{BSpline}, Curve};
 use palette::LinSrgb;
@@ -113,8 +114,12 @@ struct Cli {
 /// # Arguments
 /// - **x_offset**, **y_offset**: Coords of the offset; any value you like but remember the
 /// main action is between (-2.0, -1.12) and (0.47, 1.12)
-/// - **magnification**: 1.0 for no magnification, otherwise any value > 1.0 to zoom in
+/// - **magnification**: 1.0 for no magnification, otherwise any value > 1.0 to zoom in; zero
+/// or negative values are not allowed
 pub fn calculate_rectangle(x_offset: f64, y_offset: f64, magnification: f64) -> (f64, f64, f64, f64) {
+    if magnification <= 0.0 {
+        panic!("Zero or negative magnification is not allowed.");
+    }
     let x_min = -2.0;
     let y_min = -1.12;
     let x_max = 0.47;
@@ -139,6 +144,7 @@ fn main() {
     let y_offset = args.y_offset;
     let image_size = args.size;
     let max_iterations = args.iterations;
+    let output_path = args.output_path;
 
     // Get x, y coords of rectangle to draw
     let (x1, y1, x2, y2) = calculate_rectangle(x_offset, y_offset, magnification);
@@ -150,6 +156,6 @@ fn main() {
     let elapsed = now.elapsed();
     println!("Done! Elapsed time: {:.2?}", elapsed);
 
-    img.save(args.output_path).unwrap();
-
+    img.save(&output_path).unwrap();
+    println!("Image save to {:?}", &output_path);
 }
