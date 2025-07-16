@@ -55,8 +55,13 @@ $ mandelbrot_cli -m 4.55 -x 0.64 -y 0.89
 ![example1.png](example1.png "example1.png")
 
 ```
-$ mandelbrot_cli -m 110.0 -x 0.605 -y 1.0335 -i 200 
+$ mandelbrot_cli -m 110 -x 0.605 -y 1.0335 -i 200 
 ```
 
 ![example2.png](example2.png "example2.png")
 
+```
+$ mandelbrot_cli -m 4000000 -x=-1.0999975 -i 250
+```
+
+![example3.png](example3.png "example3.png")
