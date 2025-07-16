@@ -33,8 +33,7 @@ pub fn calculate_point(x_pos: f64, y_pos: f64, max_iterations: u32) -> u32 {
 /// - width and height can be anything you want, 2160x2160 is recommended for drawing
 /// the entire Set
 /// - x1, y1, x2, y2 should be -2.0, -1.12, 0.47, 1.12 to draw the entire Set
-/// - max_iterations: 100 is fast but has less colour, 1000 is slower but has 
-/// more colour; use lower values for exploration and higher values for detailed
+/// - max_iterations: use lower values for exploration and higher values for detailed
 /// rendering
 pub fn generate_image(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64, max_iterations: u32) -> ImageBuffer<image::Rgb<u8>, Vec<u8>> {
     // Set up colour pallete.

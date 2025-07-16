@@ -36,16 +36,26 @@ Explore the Mandelbrot Set and refine your images using the available options:
   -h, --help                           Print help
 ```
 
+**Negative numbers**: You can pass negative numbers to the -x and -y arguments like this:
+
+```
+$ mandelbrot_cli -x=-1.0 -y=-0.23
+```
+
+## Usage as a Crate
+
+Public functions for rendering the Set are available so you can import them into your own Rust projects.  See Crate documentation for details.
+
 # Gallery
 
 ```
-$ mandelbrot -m 4.55 -x 0.64 -y 0.89 
+$ mandelbrot_cli -m 4.55 -x 0.64 -y 0.89 
 ```
 
 ![example1.png](example1.png "example1.png")
 
 ```
-$ mandelbrot -m 110.0 -x 0.605 -y 1.0335 -i 200 
+$ mandelbrot_cli -m 110.0 -x 0.605 -y 1.0335 -i 200 
 ```
 
 ![example2.png](example2.png "example2.png")
