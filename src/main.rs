@@ -32,7 +32,9 @@ pub fn calculate_point(x_pos: f64, y_pos: f64, max_iterations: u32) -> u32 {
 /// # Recommended values
 /// - width and height can be anything you want, 1080x1080 is recommended
 /// - x1, y1, x2, y2 should be -2.0, -1.12, 0.47, 1.12 to draw the entire Set
-/// - max_iterations: 1000 provides a good compromise between colour depth and performance
+/// - max_iterations: 100 is fast but has less colour, 1000 is slower but has 
+/// more colour; use lower values for exploration and higher values for detailed
+/// rendering
 pub fn generate_image(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f64, max_iterations: u32) -> ImageBuffer<image::Rgb<u8>, Vec<u8>> {
     // Set up colour pallete.
     // First create a colour curve...
@@ -88,22 +90,6 @@ pub fn generate_image(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f6
 }
 
 
-#[derive(Parser, Default, Debug)]
-struct Cli {
-    #[clap(short, long, default_value_t = 1080)]
-    size: u32,
-    #[clap(short, long, default_value_t = 0.0)]
-    x_offset: f64,
-    #[clap(short, long, default_value_t = 0.0)]
-    y_offset: f64,
-    #[clap(short, long, default_value_t = 1.0)]
-    magnification: f64,
-    #[clap(short, long, default_value_t = 100)]
-    iterations: u32,
-    #[clap(short, long, default_value = "out.png" )]
-    output_path: std::path::PathBuf,
-}
-
 /// Calculate the x, y coords of a rectanglular section of the Mandelbrot Set for a given
 /// x, y offset and magnification.
 /// 
@@ -135,6 +121,24 @@ pub fn calculate_rectangle(x_offset: f64, y_offset: f64, magnification: f64) -> 
     (x1, y1, x2, y2)
 }
 
+
+#[derive(Parser, Default, Debug)]
+struct Cli {
+    #[clap(short, long, default_value_t = 1080)]
+    size: u32,
+    #[clap(short, long, default_value_t = 0.0)]
+    x_offset: f64,
+    #[clap(short, long, default_value_t = 0.0)]
+    y_offset: f64,
+    #[clap(short, long, default_value_t = 1.0)]
+    magnification: f64,
+    #[clap(short, long, default_value_t = 1000)]
+    iterations: u32,
+    #[clap(short, long, default_value = "out.png" )]
+    output_path: std::path::PathBuf,
+}
+
+
 fn main() {
 
     // Extract CLI args
@@ -157,5 +161,5 @@ fn main() {
     println!("Done! Elapsed time: {:.2?}", elapsed);
 
     img.save(&output_path).unwrap();
-    println!("Image save to {:?}", &output_path);
+    println!("Image saved to {:?}", &output_path);
 }
