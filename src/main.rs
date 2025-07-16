@@ -91,12 +91,13 @@ pub fn generate_image(width: u32, height: u32, x1: f64, y1: f64, x2: f64, y2: f6
 }
 
 
-/// Calculate the x, y coords of a rectanglular section of the Mandelbrot Set for a given
-/// x, y offset and magnification.
+/// Calculate the x, y coords of a rectanglular Viewport for a given x, y offset and magnification.
 /// 
 /// The rectangle is centered over the midpoint of the complete Set (as opposed to origin, 
 /// which is off-center), unless x_offset and/or y_offset are non-zero.  In this way you
 /// can recentre the image over a selected point on the Set and magnify to reveal more detail.
+/// 
+/// Just keep in mind you're offsetting the *viewport* and not the Set itself.
 /// 
 /// # Arguments
 /// - **x_offset**, **y_offset**: Coords of the offset; any value you like but remember the

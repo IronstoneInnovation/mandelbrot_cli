@@ -37,3 +37,16 @@ Explore the Mandelbrot Set and refine your images using the available options:
 ```
 
 # Gallery
+
+```
+$ mandelbrot -m 4.55 -x 0.64 -y 0.89 
+```
+
+![example1.png](example1.png "example1.png")
+
+```
+$ mandelbrot -m 110.0 -x 0.605 -y 1.0335 -i 200 
+```
+
+![example2.png](example2.png "example2.png")
+
