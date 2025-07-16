@@ -30,7 +30,8 @@ pub fn calculate_point(x_pos: f64, y_pos: f64, max_iterations: u32) -> u32 {
 /// - **max_iterations**: The maximum number of iterations per point
 /// 
 /// # Recommended values
-/// - width and height can be anything you want, 1080x1080 is recommended
+/// - width and height can be anything you want, 2160x2160 is recommended for drawing
+/// the entire Set
 /// - x1, y1, x2, y2 should be -2.0, -1.12, 0.47, 1.12 to draw the entire Set
 /// - max_iterations: 100 is fast but has less colour, 1000 is slower but has 
 /// more colour; use lower values for exploration and higher values for detailed
@@ -124,7 +125,7 @@ pub fn calculate_rectangle(x_offset: f64, y_offset: f64, magnification: f64) -> 
 
 #[derive(Parser, Default, Debug)]
 struct Cli {
-    #[clap(short, long, default_value_t = 1080)]
+    #[clap(short, long, default_value_t = 2160)]
     size: u32,
     #[clap(short, long, default_value_t = 0.0)]
     x_offset: f64,
@@ -132,7 +133,7 @@ struct Cli {
     y_offset: f64,
     #[clap(short, long, default_value_t = 1.0)]
     magnification: f64,
-    #[clap(short, long, default_value_t = 1000)]
+    #[clap(short, long, default_value_t = 100)]
     iterations: u32,
     #[clap(short, long, default_value = "out.png" )]
     output_path: std::path::PathBuf,
