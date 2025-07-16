@@ -44,7 +44,7 @@ $ mandelbrot_cli -x=-1.0 -y=-0.23
 
 ## Usage as a Crate
 
-The functions to rendering the Mandelbrot Set are public so you can import them into your own Rust projects.  See Crate documentation for details.
+The functions to rendering the Mandelbrot Set are public so you can import them into your own Rust projects.  See [Crate documentation](https://crates.io/crates/mandelbrot_cli) for details.
 
 # Gallery
 
